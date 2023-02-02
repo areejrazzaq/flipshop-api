@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Events\UserRegistered;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Models\User;
-use Spatie\Permission\Models\Role;
 
 class AuthController extends Controller
 {
@@ -36,6 +36,7 @@ class AuthController extends Controller
             'password' => bcrypt($credentials['password']),
         ]);
         $user->assignRole($credentials['role']);
+        UserRegistered::dispatch(['user_id'=>$user->id]);
 
         $user['token'] = $this->tokenFromUser($user);
 
